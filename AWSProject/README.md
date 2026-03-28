@@ -106,3 +106,11 @@ To design a secure, scalable and fault-tolerant 3-tier architecture on AWS for h
 | Scaling Policy   | Target Tracking                                                         |
 | Instance Count   | Min: 2, Desired: 2, Max: 4                                              |
 | Subnets          | App Subnets (Private): 10.16.128.0/20, 10.16.144.0/20                  |
+
+# Deployment Steps with Screenshots
+
+## Step 1
+
+The first step was to create a VPC which was named ritual-roast-vpc. So, a VPC is a logical partition of AWS infrastructure where we can deploy our resources and make sure, they are logically isolated from other customers that are also using the AWS infrastructure. The VPC was created in the region us-east-1 in N. Virginia. The VPC CIDR configured was 10.16.0.0/16. Below is a screenshot of the created VPC:
+
+!(AWSProject/Images/rr-vpc.png)
