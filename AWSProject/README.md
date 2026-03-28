@@ -42,3 +42,67 @@ To design a secure, scalable and fault-tolerant 3-tier architecture on AWS for h
 | Data Subnets (Private)      | 10.16.192.0/20 (us-east-1a), 10.16.208.0/20 (us-east-1b)               |
 | Public Route Table          | 0.0.0.0/0 → Internet Gateway                                            |
 | Private Route Table (Main)  | 0.0.0.0/0 → NAT Gateway                                                 |
+
+| Security Group     | Inbound Rules                                                                 |
+|------------------|------------------------------------------------------------------------------|
+| LoadBalancer-SG  | Allow HTTP (port 80) from 0.0.0.0/0                                          |
+| Web-App-SG       | Allow TCP 5000 from load-balancer-sg                                          |
+| Database-SG      | Allow TCP 3306 from web-app-sg and from itself (for Secrets Manager rotation) |
+
+## RDS MySQL Configuration
+
+| Component        | Details                                                                 |
+|-----------------|-------------------------------------------------------------------------|
+| Engine          | MySQL                                                                  |
+| Deployment      | Multi-AZ (us-east-1a and us-east-1b)                                   |
+| Subnet Group    | Data subnets (10.16.192.0/20, 10.16.208.0/20)                          |
+| Storage Type    | General Purpose SSD – 20GB                                             |
+| Secrets Manager | Stores RDS Credentials                                                 |
+| Rotation        | Enabled, every 7 days                                                  |
+
+## S3 Bucket Configuration
+
+| Component          | Details                                      |
+|--------------------|----------------------------------------------|
+| Purpose            | Hosting Flask application source code        |
+| Bucket Policy      | Only accessible via EC2 IAM Role             |
+| Storage Class      | Standard                                     |
+| Versioning         | Enabled                                      |
+| Bucket Replication | N/A                                          |
+
+## EC2 Instance Configuration
+
+| Component         | Details                                                                 |
+|------------------|-------------------------------------------------------------------------|
+| AMI              | Amazon Linux 2023                                                      |
+| Instance Profile | IAM Role with S3, SSM, Secrets Manager permissions                     |
+| Permissions      | AmazonS3FullAccess, AmazonSSMManagedInstanceCore, SecretsManagerReadWrite |
+
+## IAM Role for EC2
+
+| Permission                          | Purpose                         |
+|------------------------------------|---------------------------------|
+| AmazonS3FullAccess                 | Fetch application code          |
+| AmazonSSMManagedInstanceCore       | SSM Session Manager access      |
+| SecretsManagerReadWrite (GetSecretValue) | Fetch DB credentials securely   |
+
+## Application Load Balancer Configuration
+
+| Component       | Details                                                                 |
+|----------------|-------------------------------------------------------------------------|
+| Type           | Internet-facing                                                         |
+| Subnets        | Public Subnets 1 & 2                                                    |
+| Security Group | loadbalancer-sg                                                         |
+| Target Group   | Targets on port 5000 (EC2s) – configured by ASG                         |
+| Listener       | HTTP listener on port 80 → forwards to target group                     |
+| Health Checks  | TCP/5000 or HTTP endpoint (e.g., /)                                     |
+
+## Auto Scaling Group Configuration
+
+| Component         | Details                                                                 |
+|------------------|-------------------------------------------------------------------------|
+| Launch Template  | Includes AMI, IAM Role, and User Data                                  |
+| User Data Script | Install Python, Flask, download from S3, run app                       |
+| Scaling Policy   | Target Tracking                                                         |
+| Instance Count   | Min: 2, Desired: 2, Max: 4                                              |
+| Subnets          | App Subnets (Private): 10.16.128.0/20, 10.16.144.0/20                  |
