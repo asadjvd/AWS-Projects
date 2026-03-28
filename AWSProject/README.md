@@ -152,3 +152,86 @@ We use a Nat gateway when we need to access internet from a private subnet. So, 
 
 ![RR-Main-RTB](Images/rr-main-rtb.png)
 
+## Step 5
+
+Three security groups were created for web application deployment. First security group had an inbound rule where it would allow HTTP traffic from internet to application load balancer. The second security group would allow traffic from application load balancer to web application servers on port 5000. The reason for allowing traffic on port 5000 is it is default port for Flask application and ritual roast project is built using Flask framework, which is a lightweight, web framework written in Python used to build web applications and APIs. Ritual Roast application is based on HTML, Python and Flask framework.  Third security group would allow traffic from web application servers security group and its own security group (for Secrets Manager Lambda rotation) on port 3306. Below are screenshots of the security groups created along with their inbound rules:
+
+![LoadBalancer-SG](Images/loadbalancer-sg.png)
+
+![Web-App-SG](Images/web-app-sg.png)
+
+![Database-SG](Images/database-sg.png)
+
+## Step 6
+
+To run or deploy the Ritual Roast web application we will need a source code repository somewhere from where we can download the code dynamically. It will be residing in S3 bucket which was configured as part of architecture. The S3 bucket will be hosting the source code, and it will be accessible to EC2 instances via IAM Role. The storage class used was standard with versioning enabled. Below is the screenshot of the S3 bucket:
+
+![RR-S3-Bucket](Images/rr-s3-bucket.png)
+
+## Step 7
+
+Relational Database Service (RDS) MySQL database is deployed as we will be using MySQL as the backend data store for customers submitting recipes, and we would use multi-AZ configuration. First, we create a subnet group for RDS where the two Data subnets (datasubnet-01-1a and datasubnet-02-1b) are associated with RDS then we create the RDS database where we provide all the required RDS instance configurations. The storage type for database used is General Purpose SSD with 20GB storage. Also, Secrets Manager will be used to store credentials in the next step. Below is the screenshot of the created RDS database for the Ritual Roast project:
+
+![RR-RDS-SG-Rules](Images/rr-rds-sg-rules.png)
+
+![RR-RDS-Subnet](Images/rr-rds-subnet.png)
+
+![RR-RDS-Instance-Config](Images/rr-rds-instance-config.png)
+
+## Step 8
+
+An additional security measure as part of the architecture is to make sure the app is not embedded with database credentials to access the backend database. Good practice is to ensure the app can dynamically retrieve the credentials to access database and for that purpose we have made use of AWS Secrets Manager. It allows us to encrypt and store database credentials which we would need to have the application retrieve dynamically by providing access to secrets manager. We also set up rotation feature on secrets manager that can rotate credentials regularly. Below is the screenshot for created secret:
+
+![RR-Secret](Images/rr-secret.png)
+
+## Step 9
+
+Another critical element of architecture is IAM Role. A lot of the services are dependent on each other. The EC2 instances that we deploy in web/app subnet are going to need to be able to pull source code files from S3 bucket. They are going to need to get credentials from Secrets Manager dynamically. So, we will need IAM Roles for that because one resource accessing or connecting to another resource would need authentication/authorization that is where IAM Roles come into play. Below is the screenshot of the created EC2 IAM Role:
+
+![RR-IAM-Role](Images/rr-iam-role.png)
+
+## Step 10
+
+In addition, we deploy Application Load Balancer (ALB). The ALB will accept inbound traffic from the internet on port 80 from customers and distribute traffic to ALB nodes that are deployed in public subnets. As part of ALB, we will be configuring target groups as target groups would host or define the targets, which will be the EC2 instances that will run the web application. Before creating the ALB, we create the target group where we configure the protocol as HTTP, select port 5000 for Flask Web Application, select the VPC specifically created for the Ritual Roast Web Application project and lastly, we configure the health checks for the instances. Next, we deployed the load balancer where we made sure it is multi-AZ for our project, selected the Ritual Roast VPC, load balancer security group and the target group created for the ritual roast application along with port 80 to listen to traffic from internet. Below is screenshot showing the configurations used for ALB:
+
+![RR-ALB](Images/rr-app-alb.png)
+
+## Step 11
+
+After having deployed ALB, next we will deploy an Auto Scaling Group (ASG) which will have a launch template design that will allow us to scale in and scale out EC2 instances. The launch template will be configured to use the AMI, which is a standard Linux 2023 AMI, it will also be configured with a User Data Script that will allow us to download source code files from S3 bucket to our EC2 instances once they are launched. In addition to that the launch template will be configured with the IAM roles necessary to give permissions so that it can access all those other resources that it needs to access with all configurations in place. The launch template will launch web application which will be fully configured to run the Flask based application. Below are screenshots of the configured ASG, launch template, the user data script code that we used during the launch of EC2 instances, and the instance summary once in available state:
+
+![RR-Launch-Template](Images/rr-launch-template.png)
+
+![RR-ASG-Details](Images/rr-asg-details.png)
+
+![RR-ASG-Integration](Images/rr-asg-integration.png)
+
+![RR-User-Data-Script](Images/user-data.png)
+
+![RR-Instance-Summary-1](Images/instance-summary1.png)
+
+![RR-Instance-Summary-2](Images/instance-summary2.png)
+
+# Ritual Roast Web Application High Availability Tests
+
+Once the deployment is complete for multi-tier application using AWS services, next we run some high availability tests. First, we do a test to see if auto scaling group works as expected or not. The ASG was designed to ensure that there are always two instances available across the two subnets across the two availability zones. For the first test we stopped one of the two running instances and once stopped it would mean the health check would fail and the target group would show only one healthy instance remaining while there will be three total targets. It means that there is already one more instance in deployment. From the activity history in ASG we can see that one instance was drained as it was found to be out of service and immediately terminated upon health check failure. Subsequently, a new replacement instance was successfully launched in response to an unhealthy instance. The target group would show us two healthy instances, and we would still be able to access the application from the other active instance using the DNS name from the Load Balancer. Below are screenshots from the first test we did by stopping one running instance to check availability of the web application and the behavior of ASG running a fleet of two EC2 instances:
+
+![RR-App-TG-Pre-FO](Images/rr-app-tg-pre-fo.png)
+
+![RR-App-TG-Post-FO](Images/rr-app-tg-post-fo.png)
+
+![RR-ASG-Activity-Logs](Images/rr-asg-activity-after-stopping-instance.png)
+
+![RR-EC2-After-Stopping-Instance](Images/rr-ec2-after-stopping-instance.png)
+
+For RDS database failover we would go to the already created ritualroastdb. We performed a simulation of a failover by rebuilding the primary database instance. So, for that we select the Reboot with Failover? option to perform a failover. Once confirmed the database instance will be rebooted. The data will be replicated synchronously. Below screenshots show we can still connect to the database once the reboot has been completed as a third recipe has been added post failover:
+
+![RR-RDS-FO-Logs-Events](Images/rr-rds-fo-log-events.png)
+
+### Ritual Roast Application Pre Failover
+
+![RR-App-Pre-FO](Images/rr-app-pre-fo.png)
+
+### Ritual Roast Application Post Failover
+
+![RR-App-Post-FO](Images/rr-app-post-fo.png)
