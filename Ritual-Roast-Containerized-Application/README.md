@@ -1,25 +1,25 @@
-# Ritual Roast Three Tier Web Application
+# Ritual Roast Containerized Web Application
 
-Deployed a highly available 3-tier web application on Amazon Web Services using EC2, ALB and RDS with Multi-AZ support.
+Deployed a containerized application on Amazon ECS using Fargate for serverless compute.
 
 ## Overview:
-To design a secure, scalable and fault-tolerant 3-tier architecture on AWS for hosting a Ritual Roast Customer Contest web application (MVP). The application will use:
+To design a secure, scalable architecture on AWS for hosting a Ritual Roast Customer Contest web application (MVP). The application will use:
 - Application Load Balancer (ALB) for routing traffic
-- Amazon EC2 instances for compute 
+- Amazon ECS (using Fargate Launch Type)
 - RDS for database tier
 
 ## Customer Flow Chart
 - Customer (Web Browser)
-	- Initiates access to the web via public internet
+	- Initiates access to the web appears via public internet
 - Application Load Balancer
 	- Receives all incoming traffic.
-	- Distributes requests across a fleet of EC2 instances.
-- EC2 instances (App + Web Tier Combined)
-- Host both the Frontend (form and recipe table display) and the Backend (code to handle form submissions and DB queries)
+	- Distributes traffic using path-based rules - all traffic is routed to the frontend Next.js app and request to add or get recipes directed to the backend Flask app
+- Amazon ECS
+	- The Next.js frontend and Flask backend will each run as independent ECS services using Fargate tasks, allowing them to scale and deploy separately.
 	- Display a form to the user and render the table of submitted recipes. 
 - Amazon RDS (MySQL, Multi-AZ)
 	- Stores submitted recipe data.
-	- Backend reads from this DB to populate the frontend dynamically.
+	- Backend reads from this DB to populate the frontend dynamically
 
 ![Customer Flow Chart](Architecture/RR-Flow-Chart.jpg)
 
