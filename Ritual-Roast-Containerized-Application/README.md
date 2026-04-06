@@ -149,7 +149,7 @@ To design a secure, scalable architecture on AWS for hosting a Ritual Roast Cust
 | Service Type | REPLICA |
 | Desired Tasks | 2 |
 | VPC | ritual-roast-vpc |
-| Security Group | rr-app-sg |
+| Security Group | Web-App-SG |
 | Load Balancer Type | Application Load Balancer |
 | Load Balancer Name | ritual-roast-alb |
 | Listener Protocol | HTTP:80 |
@@ -169,7 +169,7 @@ To design a secure, scalable architecture on AWS for hosting a Ritual Roast Cust
 | Service Type | REPLICA |
 | Desired Tasks | 2 |
 | VPC | ritual-roast-vpc |
-| Security Group | rr-app-sg |
+| Security Group | Web-App-SG |
 | Load Balancer Type | Application Load Balancer |
 | Load Balancer Name | ritual-roast-alb |
 | Listener Protocol | HTTP:80 |
