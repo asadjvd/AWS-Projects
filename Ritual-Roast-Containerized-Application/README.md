@@ -58,52 +58,55 @@ To design a secure, scalable architecture on AWS for hosting a Ritual Roast Cust
 | Secrets Manager | Stores credentials |
 | Rotation | Enabled (7 days) |
 
-## S3 Bucket Configuration
+## IAM Role for ECS & EC2
 
-| Component          | Details                                      |
-|--------------------|----------------------------------------------|
-| Purpose            | Hosting Flask application source code        |
-| Bucket Policy      | Only accessible via EC2 IAM Role             |
-| Storage Class      | Standard                                     |
-| Versioning         | Enabled                                      |
-| Bucket Replication | N/A                                          |
+### ECS Permissions
 
-## EC2 Instance Configuration
+| Permission | Purpose |
+|-----------|--------|
+| AmazonECSTaskExecutionRolePolicy | Pull images from ECR & send logs to CloudWatch |
+| SecretsManagerReadWrite | Fetch DB credentials |
 
-| Component         | Details                                                                 |
-|------------------|-------------------------------------------------------------------------|
-| AMI              | Amazon Linux 2023                                                      |
-| Instance Profile | IAM Role with S3, SSM, Secrets Manager permissions                     |
-| Permissions      | AmazonS3FullAccess, AmazonSSMManagedInstanceCore, SecretsManagerReadWrite |
+### EC2 Permissions
 
-## IAM Role for EC2
+| Permission | Purpose |
+|-----------|--------|
+| AmazonSSMManagedInstanceCore | SSM access |
 
-| Permission                          | Purpose                         |
-|------------------------------------|---------------------------------|
-| AmazonS3FullAccess                 | Fetch application code          |
-| AmazonSSMManagedInstanceCore       | SSM Session Manager access      |
-| SecretsManagerReadWrite (GetSecretValue) | Fetch DB credentials securely   |
+## EC2 Instance Configuration (Docker Server)
 
-## Application Load Balancer Configuration
+| Component | Details |
+|----------|--------|
+| AMI | Amazon Linux 2023 |
+| Instance Profile | IAM Role for SSM |
+| Permissions | AmazonSSMManagedInstanceCore |
+| Apps | Docker |
 
-| Component       | Details                                                                 |
-|----------------|-------------------------------------------------------------------------|
-| Type           | Internet-facing                                                         |
-| Subnets        | Public Subnets 1 & 2                                                    |
-| Security Group | loadbalancer-sg                                                         |
-| Target Group   | Targets on port 5000 (EC2s) – configured by ASG                         |
-| Listener       | HTTP listener on port 80 → forwards to target group                     |
-| Health Checks  | TCP/5000 or HTTP endpoint (e.g., /)                                     |
+## ECR Docker Images
 
-## Auto Scaling Group Configuration
+| Component | Details |
+|----------|--------|
+| Purpose | Docker images for Next.js frontend & Flask backend |
 
-| Component         | Details                                                                 |
-|------------------|-------------------------------------------------------------------------|
-| Launch Template  | Includes AMI, IAM Role, and User Data                                  |
-| User Data Script | Install Python, Flask, download from S3, run app                       |
-| Scaling Policy   | Target Tracking                                                         |
-| Instance Count   | Min: 2, Desired: 2, Max: 4                                              |
-| Subnets          | App Subnets (Private): 10.16.128.0/20, 10.16.144.0/20                  |
+## ECS Task Definitions
+
+### Next.js Frontend
+
+| Field | Value |
+|------|------|
+| Task Definition | frontend-nextjs-app-def |
+| IAM Role | Task execution role |
+| Container Name | frontend container |
+| Port | 3000 |
+
+### Flask App
+
+| Field | Value |
+|------|------|
+| Task Definition | flask-app-def |
+| IAM Role | Task execution role |
+| Container Name | flask container |
+| Port | 5000 |
 
 # Deployment Steps with Screenshots
 
