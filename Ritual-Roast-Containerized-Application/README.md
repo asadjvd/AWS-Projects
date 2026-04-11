@@ -214,13 +214,13 @@ Once the subnets are created, we then create an Internet Gateway (IGW) by assign
 
 We use a Nat gateway when we need to access internet from a private subnet. So, a Nat Gateway would be created in Ritual Roast VPC and added to a public subnet. Although it can be in Multiple Availability Zones but because it is a service for which we are charged so I have created just one in PublicSubnet-01-1a. The main route table is modified to add entry of Nat Gateway. Again, the request from Nat GW passes to IGW which then sends it to its destination. The request from resources in private subnet is intercepted by Nat Gateway which performs IP masquerading. It changes Private IP to Public IP and then sends it to IGW. Below are screenshots of NAT GW and the main route table created for Ritual Roast web application deployment on the AWS:
 
-![RR-Nat-GW](Images/rr-natgw.png)
+![RR-Nat-GW](Images/rr-natgw-containerized-app.png)
 
-![RR-Main-RTB](Images/rr-main-rtb.png)
+![RR-Main-RTB](Images/rr-main-rtb-containerized-app.png)
 
 ## Step 5
 
-Three security groups were created for web application deployment. First security group had an inbound rule where it would allow HTTP traffic from internet to application load balancer. The second security group would allow traffic from application load balancer to web application servers on port 5000. The reason for allowing traffic on port 5000 is it is default port for Flask application and ritual roast project is built using Flask framework, which is a lightweight, web framework written in Python used to build web applications and APIs. Ritual Roast application is based on HTML, Python and Flask framework.  Third security group would allow traffic from web application servers security group and its own security group (for Secrets Manager Lambda rotation) on port 3306. Below are screenshots of the security groups created along with their inbound rules:
+Three security groups were created for web application deployment. First security group had an inbound rule where it would allow HTTP traffic from internet to application load balancer. The second security group would allow traffic from application load balancer to web application servers on port 5000. The reason for allowing traffic on port 5000 is it is default port for Flask application and ritual roast project is built using Flask framework, which is a lightweight, web framework written in Python used to build web applications and APIs. Ritual Roast application is based on HTML, Python and Flask framework. Third security group would allow traffic from web application servers security group and its own security group (for Secrets Manager Lambda rotation) on port 3306. Below are screenshots of the security groups created along with their inbound rules:
 
 ![LoadBalancer-SG](Images/loadbalancer-sg.png)
 
