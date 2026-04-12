@@ -214,9 +214,9 @@ Once the subnets are created, we then create an Internet Gateway (IGW) by assign
 
 We use a Nat gateway when we need to access internet from a private subnet. So, a Nat Gateway would be created in Ritual Roast VPC and added to a public subnet. Although, it can be in Multiple Availability Zones but because it is a service for which we are charged so I have created just one in PublicSubnet-01-1a. The main route table is modified to add entry of Nat Gateway. Again, the request from Nat Gateway passes to IGW which then sends it to its destination. The request from resources in private subnet is intercepted by Nat Gateway which performs IP masquerading. It changes Private IP to Public IP and then sends it to IGW. Below are screenshots of NAT GW and the main route table created for Ritual Roast containerized web application deployment on the AWS:
 
-![RR-Nat-GW](Images/rr-natgw-containerized-app.png)
+![RR-Nat-GW](Images/rr-natgw-containerized-app.PNG)
 
-![RR-Main-RTB](Images/rr-main-rtb-containerized-app.png)
+![RR-Main-RTB](Images/rr-main-rtb-containerized-app.PNG)
 
 ## Step 5
 
@@ -230,19 +230,13 @@ Three security groups were created for containerized application deployment. Fir
 
 ## Step 6
 
-To run or deploy the Ritual Roast web application we will need a source code repository somewhere from where we can download the code dynamically. It will be residing in S3 bucket which was configured as part of architecture. The S3 bucket will be hosting the source code, and it will be accessible to EC2 instances via IAM Role. The storage class used was standard with versioning enabled. Below is the screenshot of the S3 bucket:
-
-![RR-S3-Bucket](Images/rr-s3-bucket.png)
-
-## Step 7
-
 Relational Database Service (RDS) MySQL database is deployed as we will be using MySQL as the backend data store for customers submitting recipes, and we would use multi-AZ configuration. First, we create a subnet group for RDS where the two Data subnets (datasubnet-01-1a and datasubnet-02-1b) are associated with RDS then we create the RDS database where we provide all the required RDS instance configurations. The storage type for database used is General Purpose SSD with 20GB storage. Also, Secrets Manager will be used to store credentials in the next step. Below is the screenshot of the created RDS database for the Ritual Roast project:
 
-![RR-RDS-SG-Rules](Images/rr-rds-sg-rules.png)
+![RR-RDS-SG-Rules](Images/rr-rds-db-containerized-app.PNG)
 
 ![RR-RDS-Subnet](Images/rr-rds-subnet.png)
 
-![RR-RDS-Instance-Config](Images/rr-rds-instance-config.png)
+![RR-RDS-Instance-Config](Images/rr-rds-db-containerized-instance-config.PNG)
 
 ## Step 8
 
