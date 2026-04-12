@@ -238,13 +238,13 @@ Relational Database Service (RDS) MySQL database is deployed as we will be using
 
 ![RR-RDS-Instance-Config](Images/rr-rds-db-containerized-app-instance-config.PNG)
 
+## Step 7
+
+An additional security measure as part of the architecture is to make sure the application (app) is not embedded with database credentials to access the backend database. Good practice is to ensure the app can dynamically retrieve the credentials to access database and for that purpose we have made use of AWS Secrets Manager. It allows us to encrypt and store database credentials which we would need to have the application retrieve dynamically by providing access to secrets manager. The backend Flask application is coded with the necessary API calls in order to retrieve the secret and the application has permissions to talk to secrets manager using IAM Roles. We also set up rotation feature on secrets manager that can rotate credentials regularly. Below is the screenshot for created secret:
+
+![RR-Secret](Images/rr-secret-containerized-app.PNG)
+
 ## Step 8
-
-An additional security measure as part of the architecture is to make sure the app is not embedded with database credentials to access the backend database. Good practice is to ensure the app can dynamically retrieve the credentials to access database and for that purpose we have made use of AWS Secrets Manager. It allows us to encrypt and store database credentials which we would need to have the application retrieve dynamically by providing access to secrets manager. We also set up rotation feature on secrets manager that can rotate credentials regularly. Below is the screenshot for created secret:
-
-![RR-Secret](Images/rr-secret.png)
-
-## Step 9
 
 Another critical element of architecture is IAM Role. A lot of the services are dependent on each other. The EC2 instances that we deploy in web/app subnet are going to need to be able to pull source code files from S3 bucket. They are going to need to get credentials from Secrets Manager dynamically. So, we will need IAM Roles for that because one resource accessing or connecting to another resource would need authentication/authorization that is where IAM Roles come into play. Below is the screenshot of the created EC2 IAM Role:
 
