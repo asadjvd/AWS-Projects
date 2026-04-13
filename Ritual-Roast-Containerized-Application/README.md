@@ -309,6 +309,15 @@ Below are screenshots of the new policy attached to EC2 role for ECR and Docker 
 
 ![RR-EC2-ECR-Permission-Policy](Images/rr-ec2-ecr-permission-policy.PNG)
 
+## Step 12
+
+Next step is to deploy two target groups one for Flask backend application and the other for frontend nextjs application. The architecture is such that fargate would launch the containers within a fargate shared environment and then it would inject ENI cards into the VPC into the appropriate subnets it identified which means the target types would be IP addresses. Below are screenshots of both target groups:
+
+![RR-Flask-TG](Images/rr-flask-tg-containerized-app.PNG)
+
+![RR-Nextjs-TG](Images/rr-nextjs-tg.PNG)
+
+
 ## Step 
 
 In addition, we deploy Application Load Balancer (ALB). The ALB will accept inbound traffic from the internet on port 80 from customers and distribute traffic to ALB nodes that are deployed in public subnets. As part of ALB, we will be configuring target groups as target groups would host or define the targets, which will be the EC2 instances that will run the web application. Before creating the ALB, we create the target group where we configure the protocol as HTTP, select port 5000 for Flask Web Application, select the VPC specifically created for the Ritual Roast Web Application project and lastly, we configure the health checks for the instances. Next, we deployed the load balancer where we made sure it is multi-AZ for our project, selected the Ritual Roast VPC, load balancer security group and the target group created for the ritual roast application along with port 80 to listen to traffic from internet. Below is screenshot showing the configurations used for ALB:
