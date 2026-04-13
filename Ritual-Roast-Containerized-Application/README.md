@@ -254,7 +254,16 @@ Another critical element of architecture is IAM Role. We will create an IAM Role
 
 ## Step 9
 
-Next step, we will deploy an EC2 instance which will be used as Docker server. After deploying the instance, the kernel will also be upgraded and then Docker service will be installed. The EC2 instance will be deployed using Amazon Linux 2023 AMI in the public subnet. Once Docker is setup and images are created and hosted on ECR then the instance will be terminated. Below is a screenshot of the created instancd:
+Next step, we will deploy an EC2 instance which will be used as Docker server. After deploying the instance, the kernel will also be upgraded and then Docker service will be installed. The EC2 instance will be deployed using Amazon Linux 2023 AMI in the public subnet. Once Docker is setup and images are created and hosted on ECR then the instance will be terminated. The commands executed in order to configure Docker server are shared below:
+
+```
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+sudo usermod -aG docker ec2-user
+```
+
+Below is a screenshot of the created Docker server instance:
 
 ![RR-EC2-Docker-Server-Instance](Images/rr-ec2-instance-containerized-app-instance-summary.PNG)
 
