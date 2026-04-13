@@ -311,8 +311,19 @@ Below are screenshots of the new policy attached to EC2 role for ECR and Docker 
 
 ## Step 12
 
-Next step is to deploy two target groups one for Flask backend application and the other for frontend nextjs application. The architecture is such that fargate would launch the containers within a fargate shared environment and then it would inject ENI cards into the VPC into the appropriate subnets it identified which means the target types would be IP addresses. After that we create the load balancer which we will configure to connect to the already created target groups. The load balancer deployed will forward traffic to Nextjs target group and we will also have to create to rule which is a path based rule so that we can send traffic destined for all of those API calls to the Flask backend target group. Load balancer would distribute any incoming traffic with a default route to frontend UI nextjs app but any traffic that is destined to the API calls to add recipes or get recipes should be directed to the Flask app so will have to create an additional rule in Load Balancer for path based routing to the flask target group. Below are screenshots of the Application Load Balancer: 
+Next step is to deploy two target groups one for Flask backend application and the other for frontend nextjs application. The architecture is such that fargate would launch the containers within a fargate shared environment and then it would inject ENI cards into the VPC into the appropriate subnets it identified which means the target types would be IP addresses. After that we create the load balancer which we will configure to connect to the already created target groups. The load balancer deployed will forward traffic to Nextjs target group and we will also have to create to rule which is a path based rule so that we can send traffic destined for all of those API calls to the Flask backend target group. Load balancer would distribute any incoming traffic with a default route to frontend UI nextjs app but any traffic that is destined to the API calls to add recipes or get recipes should be directed to the Flask app so will have to create an additional rule in Load Balancer for path based routing to the flask target group. Below are screenshots of the ECS target groups and Application Load Balancer: 
+
+![RR-ECS-TG](Images/rr-ecs-tg.PNG)
 
 ![RR-Application-Load-Balancer](Images/rr-app-alb.png)
 
 ![RR-ALB-Rules](Images/rr-alb-rules.PNG)
+
+## Step 13
+
+Next step is to deploy the Task Definitions that will describe what containers we are going to be deploying. Two task definitions will be created one for Flask based application and the other for nextjs application. The Task Definition has the blueprints of how we are going to deploy the containers, what is it the containers need to have interms of technology stack so it would have the link to the images so describe what image to deploy. It would also need IAM Roles in order to grant the permissions to ensure when the task is deployed its able to interact with the other AWS services in our application stack and also it will then be configured as this blueprint as this definition file that is going to subsequently be deployed into the ECS cluster.
+
+![RR-Nextjs-Task-Definition](Images/rr-nextjs-task-definition.PNG)
+
+![RR-Flask-Task-Definition](Images/rr-flask-task-definition.PNG)
+
