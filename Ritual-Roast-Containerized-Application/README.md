@@ -10,7 +10,7 @@ To design a secure, scalable architecture on AWS for hosting a Ritual Roast Cust
 
 ## Customer Flow Chart
 - Customer (Web Browser)
-	- Initiates access to the web appears via public internet
+	- Initiates access to the web application via public internet
 - Application Load Balancer
 	- Receives all incoming traffic.
 	- Distributes traffic using path-based rules - all traffic is routed to the frontend Next.js app and request to add or get recipes directed to the backend Flask app
