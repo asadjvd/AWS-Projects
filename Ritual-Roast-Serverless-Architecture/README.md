@@ -145,6 +145,25 @@ The application follows this high-level flow:
 
 ---
 
+# Deployment Steps with Screenshots
+
+## Step 1
+
+* We will be creating an IAM Role that will have two sets of permissions one will be for Lambda basic execution and second for DynamoDB full access.
+
+![Ritual Roast IAM Role](Images/rr-serverless-role.PNG)
+
+---
+
+## Step 2
+
+* Once we have IAM Role in place then we will deploy DynamoDB table. This is the table that will be used to host all of the customer recipes. The DynamoDB table will be created in the us-east-1 region and they are not deployed in a VPC which means we don't need a VPC.
+
+![Ritual Roast DynamoDB Table](Images/rr-serverless-dynamodb.PNG)
+
+---
+
+
 
 
 
