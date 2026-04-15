@@ -78,7 +78,7 @@ The application follows this high-level flow:
 ## DynamoDB Table
 
 <table>
-  <tr><th>**Component**</th><th>**Details**</th></tr>
+  <tr><th>Component</th><th>Details</th></tr>
   <tr><td>Table Name</td><td>recipes</td></tr>
   <tr><td>Primary (Partition) Key</td><td>ID (String)</td></tr>
   <tr><td>Capacity Mode</td><td>On Demand</td></tr>
@@ -102,6 +102,52 @@ The application follows this high-level flow:
   <tr><td>Architecture</td><td>x86_64</td></tr>
   <tr><td>Execution Role</td><td>ritual-roast-lambda_dynamodb_role</td></tr>
 </table>
+
+<table>
+  <tr><th>Function 2</th><th>Details</th></tr>
+  <tr><td>Function Name</td><td>GetRecipe</td></tr>
+  <tr><td>Runtime</td><td>Python 3.14</td></tr>
+  <tr><td>Architecture</td><td>x86_64</td></tr>
+  <tr><td>Execution Role</td><td>ritual-roast-lambda_dynamodb_role</td></tr>
+</table>
+
+## API Gateway
+
+<table>
+  <tr><th>Component</th><th>Details</th></tr>
+  <tr><td>API Type</td><td>REST API</td></tr>
+  <tr><td>API Name</td><td>RecipeRestAPI</td></tr>
+  <tr><td>Endpoint Type</td><td>Edge Optimized</td></tr>
+  <tr><td>IP Address Type</td><td>IPv4</td></tr>
+  <tr><td>Resource/Methods</td><td>POST and GET</td></tr>
+  <tr><td>Integration Type</td><td>Lambda – AddRecipe<br>Lambda – GetRecipe</td></tr>
+  <tr><td>Stage</td><td>Prod</td></tr>
+  <tr><td>CORS</td><td>Enable – Gateway Response 4xx and Access-Control-Allow-Methods: GET, OPTIONS, POST</td></tr>
+</table>
+
+## Amazon S3 Bucket
+
+<table>
+  <tr><th>Component</th><th>Details</th></tr>
+  <tr><td>Amazon S3 Bucket</td><td>General Purpose</td></tr>
+  <tr><td>Contents</td><td>HTML and related files</td></tr>
+</table>
+
+## CloudFront Distribution
+
+<table>
+  <tr><th>Component</th><th>Details</th></tr>
+  <tr><td>Origin</td><td>S3 Bucket</td></tr>
+  <tr><td>Enable OAC</td><td>Yes</td></tr>
+  <tr><td>Enable WAF</td><td>Yes (not for lab)</td></tr>
+  <tr><td>Supported HTTP Versions</td><td>HTTP/2</td></tr>
+</table>
+
+---
+
+
+
+
 
 
 
