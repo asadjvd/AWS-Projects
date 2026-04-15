@@ -78,12 +78,30 @@ The application follows this high-level flow:
 ## DynamoDB Table
 
 <table>
-  <tr><th>Component</th><th>Details</th></tr>
+  <tr><th>**Component**</th><th>**Details**</th></tr>
   <tr><td>Table Name</td><td>recipes</td></tr>
   <tr><td>Primary (Partition) Key</td><td>ID (String)</td></tr>
   <tr><td>Capacity Mode</td><td>On Demand</td></tr>
 </table>
 
+## IAM Role
+
+<table>
+  <tr><th>Component</th><th>Details</th></tr>
+  <tr><td>Role Name</td><td>ritual-roast-lambda_dynamodb_role</td></tr>
+  <tr><td>Permissions 1</td><td>AWSLambdaBasicExecutionRole</td></tr>
+  <tr><td>Permissions 2</td><td>AmazonDynamoDBFullAccess</td></tr>
+</table>
+
+## Lambda Functions
+
+<table>
+  <tr><th>Function 1</th><th>Details</th></tr>
+  <tr><td>Function Name</td><td>AddRecipe</td></tr>
+  <tr><td>Runtime</td><td>Python 3.14</td></tr>
+  <tr><td>Architecture</td><td>x86_64</td></tr>
+  <tr><td>Execution Role</td><td>ritual-roast-lambda_dynamodb_role</td></tr>
+</table>
 
 
 
