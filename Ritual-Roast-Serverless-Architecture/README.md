@@ -73,5 +73,17 @@ The application follows this high-level flow:
 
 ---
 
+# Low Level Design Documentation
+
+## DynamoDB Table
+
+<table>
+  <tr><th>Component</th><th>Details</th></tr>
+  <tr><td>Table Name</td><td>recipes</td></tr>
+  <tr><td>Primary (Partition) Key</td><td>ID (String)</td></tr>
+  <tr><td>Capacity Mode</td><td>On Demand</td></tr>
+</table>
+
+
 
 
