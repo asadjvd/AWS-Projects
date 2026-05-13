@@ -282,7 +282,7 @@ Next, we will create the Docker images and push those images to the ECR reposito
 curl -L -o ritual-roast-flask-backend.zip \
 https://raw.githubusercontent.com/asadjvd/AWS-Projects/440c2a8abd96bffd9544730bf3a1a3ef4077f35e/Ritual-Roast-Containerized-Application/Resources/ritual-roast-flask-backend.zip
 curl -L -o ritual-roast-flask-backend.zip \
-https://raw.githubusercontent.com/asadjvd/AWS-Projects/440c2a8abd96bffd9544730bf3a1a3ef4077f35e/Ritual-Roast-Containerized-Application/Resources/ritual-roast-flask-backend.zip
+https://raw.githubusercontent.com/asadjvd/AWS-Projects/440c2a8abd96bffd9544730bf3a1a3ef4077f35e/Ritual-Roast-Containerized-Application/Resources/ritual-roast-nextjs-frontend.zip
 unzip ritual-roast-flask-backend.zip
 unzip ritual-roast-nextjs-frontend.zip
 ```
